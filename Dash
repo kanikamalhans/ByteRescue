@@ -1,0 +1,240 @@
+Creating a two-page dashboard with interactive features for Wells Fargo involves planning a structured layout and implementing several interactive components. Here’s a detailed approach for the frontend development of the first page, as described, using modern web technologies.
+
+Technology Stack
+React.js: For building a dynamic and interactive user interface.
+Leaflet or Mapbox: For rendering the heatmap and interactive map functionalities.
+D3.js or Chart.js: For creating various charts and graphs.
+Material-UI or Ant Design: For UI components like headers, dropdowns, buttons, and other controls.
+Redux or Context API: For state management, especially useful for handling selected advisor data and filter states.
+React Router: For navigation between the two pages.
+CSS/SASS or Styled-Components: For styling the components.
+Dashboard Layout and Features
+Page 1: Advisor and Customer Overview
+
+Header Section
+
+Wells Fargo Logo: Top-left corner.
+Navigation Links: Options for maps, charts, and the search page in the top right corner.
+Filter Options: Dropdowns for selecting year and region.
+Main Content Area
+
+Interactive Map (Heatmap of US)
+
+Feature: Shows the locations of all advisors pinned on the map.
+Interaction: Clicking on an advisor pin zooms in and allows selection.
+Zoom Functionality: Ability to zoom in/out for detailed views.
+Switch Map Option: Dropdown to switch between different map types (e.g., heatmap, satellite view).
+Chart and Graph Options
+
+Feature: Buttons or tabs to switch between different visualizations.
+Chart Area: Displays selected chart or graph dynamically.
+Available Visualizations:
+Graph Visualization: Interactive network graph showing all advisor and customer nodes.
+Bar Chart: Advisor vs. Customer analysis.
+Pie Chart: Advisor category distribution.
+Filter and Analysis Controls
+
+Year and Region Filters: Controls to filter data by year and region.
+Year-Wise Analysis Toggle: Option to view year-wise analysis for each chart.
+Step-by-Step Implementation
+1. Setting Up the Project
+
+Initialize React App: Use Create React App to scaffold the project.
+
+bash
+Copy code
+npx create-react-app wells-fargo-dashboard
+cd wells-fargo-dashboard
+Install Required Libraries:
+
+bash
+Copy code
+npm install react-router-dom leaflet d3 chart.js material-ui styled-components redux react-redux
+2. Designing the Layout
+
+Header Component:
+
+Create a Header.js file with Wells Fargo logo, navigation links, and filter options.
+Use Material-UI or Ant Design for dropdowns and styling.
+jsx
+Copy code
+// src/components/Header.js
+import React from 'react';
+import { AppBar, Toolbar, Typography, Select, MenuItem } from '@material-ui/core';
+
+const Header = ({ year, setYear, region, setRegion }) => {
+  return (
+    <AppBar position="static">
+      <Toolbar>
+        <Typography variant="h6" style={{ flexGrow: 1 }}>
+          Wells Fargo Dashboard
+        </Typography>
+        <Select value={year} onChange={(e) => setYear(e.target.value)}>
+          {/* Populate years dynamically */}
+          <MenuItem value={2022}>2022</MenuItem>
+          <MenuItem value={2023}>2023</MenuItem>
+        </Select>
+        <Select value={region} onChange={(e) => setRegion(e.target.value)}>
+          {/* Populate regions dynamically */}
+          <MenuItem value="US">US</MenuItem>
+          <MenuItem value="EU">EU</MenuItem>
+        </Select>
+        {/* Navigation Links */}
+        <Typography variant="body1" style={{ marginLeft: '10px' }}>
+          <a href="/search">Search</a>
+        </Typography>
+      </Toolbar>
+    </AppBar>
+  );
+};
+
+export default Header;
+Main Content Area:
+
+Create Dashboard.js for the main content.
+Use useState or Redux to manage the selected map, chart, and filters.
+jsx
+Copy code
+// src/components/Dashboard.js
+import React, { useState } from 'react';
+import { Container, ButtonGroup, Button } from '@material-ui/core';
+import MapComponent from './MapComponent'; // Custom map component
+import ChartComponent from './ChartComponent'; // Custom chart component
+
+const Dashboard = () => {
+  const [selectedChart, setSelectedChart] = useState('graph');
+  const [year, setYear] = useState('2023');
+  const [region, setRegion] = useState('US');
+
+  return (
+    <Container>
+      {/* Map Section */}
+      <MapComponent year={year} region={region} />
+
+      {/* Chart Selector */}
+      <ButtonGroup color="primary" aria-label="outlined primary button group">
+        <Button onClick={() => setSelectedChart('graph')}>Graph</Button>
+        <Button onClick={() => setSelectedChart('bar')}>Bar Chart</Button>
+        <Button onClick={() => setSelectedChart('pie')}>Pie Chart</Button>
+      </ButtonGroup>
+
+      {/* Chart Display */}
+      <ChartComponent type={selectedChart} year={year} region={region} />
+    </Container>
+  );
+};
+
+export default Dashboard;
+Map Component:
+
+Use Leaflet or Mapbox to create a component that displays a heatmap with advisor pins.
+jsx
+Copy code
+// src/components/MapComponent.js
+import React, { useEffect } from 'react';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+
+const MapComponent = ({ year, region }) => {
+  useEffect(() => {
+    // Load advisor data based on year and region
+  }, [year, region]);
+
+  return (
+    <MapContainer center={[37.8, -96]} zoom={4} style={{ height: '400px', width: '100%' }}>
+      <TileLayer
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      />
+      {/* Example Marker */}
+      <Marker position={[51.505, -0.09]}>
+        <Popup>
+          Advisor Information Here.
+        </Popup>
+      </Marker>
+      {/* More markers based on advisor data */}
+    </MapContainer>
+  );
+};
+
+export default MapComponent;
+Chart Component:
+
+Create separate components for each type of chart (Graph, Bar, Pie) and dynamically load based on selection.
+jsx
+Copy code
+// src/components/ChartComponent.js
+import React from 'react';
+import GraphChart from './charts/GraphChart';
+import BarChart from './charts/BarChart';
+import PieChart from './charts/PieChart';
+
+const ChartComponent = ({ type, year, region }) => {
+  switch (type) {
+    case 'graph':
+      return <GraphChart year={year} region={region} />;
+    case 'bar':
+      return <BarChart year={year} region={region} />;
+    case 'pie':
+      return <PieChart year={year} region={region} />;
+    default:
+      return null;
+  }
+};
+
+export default ChartComponent;
+Graph, Bar, and Pie Chart Components:
+
+Use D3.js, Chart.js, or another charting library to render the data.
+jsx
+Copy code
+// src/components/charts/GraphChart.js
+import React, { useEffect } from 'react';
+
+const GraphChart = ({ year, region }) => {
+  useEffect(() => {
+    // Load and render graph data based on year and region
+  }, [year, region]);
+
+  return <div id="graph-chart">Graph Chart will be rendered here.</div>;
+};
+
+export default GraphChart;
+
+// Similarly, create BarChart.js and PieChart.js
+3. Implementing Interactivity and Navigation
+
+State Management:
+
+Use React’s Context API or Redux to manage global state for selected advisor, year, and region filters.
+Routing:
+
+Use React Router to handle navigation between the two pages (Dashboard and Advisor Details).
+jsx
+Copy code
+// src/App.js
+import React from 'react';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import Header from './components/Header';
+import Dashboard from './components/Dashboard';
+import AdvisorDetails from './components/AdvisorDetails'; // Second screen
+
+const App = () => {
+  return (
+    <Router>
+      <Header />
+      <Switch>
+        <Route exact path="/" component={Dashboard} />
+        <Route path="/advisor/:id" component={AdvisorDetails} />
+      </Switch>
+    </Router>
+  );
+};
+
+export default App;
+Dynamic Data Loading:
+
+Fetch and load data based on filters and selections using API calls or static JSON for mock data.
+Styling:
+
+Use CSS or a component-based styling solution to ensure the layout is visually appealing and responsive.
