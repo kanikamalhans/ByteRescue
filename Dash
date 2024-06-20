@@ -1,3 +1,162 @@
+HTML Structure (React JSX) and CSS for the First Screen
+1. HTML Structure in React (JSX)
+
+The HTML structure is embedded in the React components, which allows you to build a dynamic, interactive dashboard. Below is how you can structure your main components for the first screen:
+
+jsx
+Copy code
+// src/App.js
+import React, { useState } from 'react';
+import Header from './components/Header';
+import MapComponent from './components/MapComponent';
+import ChartComponent from './components/ChartComponent';
+import './App.css';
+
+const App = () => {
+  const [year, setYear] = useState(2023);
+  const [region, setRegion] = useState('US');
+  const [selectedChart, setSelectedChart] = useState('graph');
+  const [advisors, setAdvisors] = useState([]); // Fetch and set advisors data here
+  const [customers, setCustomers] = useState([]); // Fetch and set customers data here
+
+  return (
+    <div className="App">
+      <Header year={year} setYear={setYear} region={region} setRegion={setRegion} />
+      <div className="main-content">
+        <div className="sidebar">
+          <h3>Choose Chart Type</h3>
+          <button onClick={() => setSelectedChart('graph')}>Graph Model</button>
+          <button onClick={() => setSelectedChart('bar')}>Advisor vs Customer</button>
+          <button onClick={() => setSelectedChart('pie')}>Advisor Categories</button>
+        </div>
+        <div className="map-container">
+          <MapComponent advisors={advisors} />
+        </div>
+        <div className="charts-container">
+          <ChartComponent
+            type={selectedChart}
+            year={year}
+            region={region}
+            advisors={advisors}
+            customers={customers}
+          />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default App;
+2. CSS for Styling
+
+You can use CSS to style the components, ensuring the layout is clean, responsive, and visually appealing. Here’s a basic CSS file to get you started:
+
+css
+Copy code
+/* src/App.css */
+
+/* General styles */
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+
+.App {
+  text-align: center;
+}
+
+.main-content {
+  display: flex;
+  flex-direction: row;
+  height: calc(100vh - 64px); /* Adjust according to the height of the header */
+  overflow: hidden;
+}
+
+/* Sidebar styles */
+.sidebar {
+  width: 15%;
+  background-color: #f4f4f4;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.sidebar h3 {
+  margin-bottom: 20px;
+}
+
+.sidebar button {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.sidebar button:hover {
+  background-color: #0056b3;
+}
+
+/* Map container styles */
+.map-container {
+  flex: 1;
+  padding: 10px;
+}
+
+/* Charts container styles */
+.charts-container {
+  flex: 1;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.map-container, .charts-container {
+  overflow: auto;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+/* Header styles */
+.MuiAppBar-root {
+  background-color: #2b2b2b;
+}
+
+.MuiToolbar-root {
+  display: flex;
+  justify-content: space-between;
+}
+
+.MuiTypography-root {
+  color: white;
+}
+
+.MuiSelect-root {
+  color: white;
+  margin-left: 10px;
+}
+
+.MuiSelect-icon {
+  color: white;
+}
+
+/* Chart-specific styles */
+.chart {
+  width: 100%;
+  max-width: 600px;
+  margin-top: 20px;
+}
+
+
+
+
+
 Creating a two-page dashboard with interactive features for Wells Fargo involves planning a structured layout and implementing several interactive components. Here’s a detailed approach for the frontend development of the first page, as described, using modern web technologies.
 
 Technology Stack
